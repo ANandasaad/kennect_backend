@@ -25,9 +25,10 @@ model User {
 }
 
 model Post {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  caption   String?
-  images    String[]
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  caption String?
+  images  String[]
+
   user      User      @relation(fields: [userId], references: [id])
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt()
