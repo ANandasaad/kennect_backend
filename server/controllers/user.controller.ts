@@ -52,7 +52,7 @@ export const UserController: {
       const response = await UserLogic.selfUser({ userId });
       res.json({
         success: true,
-        message: "User logged out successfully",
+        message: "User received successfully",
         data: response,
       });
     } catch (error) {
