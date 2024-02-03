@@ -136,10 +136,10 @@ export const CommentLogic = {
         const getAllComments = await prisma.comment.findMany({
           ...skipLimit,
           where: {
-            message: {
-              contains: search,
-              mode: "insensitive",
-            },
+            // message: {
+            //   contains: search,
+            //   mode: "insensitive",
+            // },
           },
         });
         if (!getAllComments.length) throw new NotFound("No comments found");
