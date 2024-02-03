@@ -13,4 +13,6 @@ router.put(
   authenticate.authUser,
   PostController.updatePost
 );
+router.get("/get-post-by-id/:id", PostController.getPostById);
+router.get("/get-all-post", PostController.getAllPosts);
 export default router;

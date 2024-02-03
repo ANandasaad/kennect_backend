@@ -16,11 +16,18 @@ type UPDATE_TYPE = {
   input: Prisma.PostUpdateInput;
 };
 
+interface getOptions {
+  skip?: number;
+  take?: number;
+  search?: string;
+}
+
 export const PostLogic = {
   async createPost({ userId, input }: CREATE_POST_TYPE) {
     return new Promise(async (resolve, reject) => {
       try {
         const { images, caption } = input;
+
         const isUserExist = await prisma.user.findUnique({
           where: {
             id: userId,
@@ -50,7 +57,8 @@ export const PostLogic = {
           },
         });
 
-        if (!isPOstExist) throw new NotFound("Post not found");
+        if (!isPOstExist)
+          throw new NotFound("Post not found , Please add post ");
         const deletePost = await prisma.post.delete({
           where: {
             id: postId,
@@ -63,12 +71,30 @@ export const PostLogic = {
       }
     });
   },
-  async getAllPosts() {
+  async getAllPosts(input: getOptions) {
     return new Promise(async (resolve, reject) => {
       try {
-        const posts = await prisma.post.findMany();
+        const { skip, search, take } = input;
+        const skipItems = Number(take) * Number((skip as number) - 1);
+        const skipLimit = {};
+        if (Number(skip) && Number(take))
+          Object.assign(skipLimit, { skip: skipItems, take: Number(take) });
+        const posts = await prisma.post.findMany({
+          ...skipLimit,
+          where: {
+            caption: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        });
+
         if (!posts.length) throw new NotFound("No posts found");
-        return resolve(posts);
+        const pagination = {
+          skip: Number(take) * Number((skip as number) - 1),
+          take: Number(take),
+        };
+        return resolve({ posts, pagination });
       } catch (error) {
         reject(error);
       }

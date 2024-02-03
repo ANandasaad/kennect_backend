@@ -10,7 +10,8 @@ export const PostController: {
 } = {
   async createPost(req, res, next) {
     try {
-      const userId = "65bd31185fff9e5ef81504cc";
+      const userId = req.currentUser?.id as string;
+      console.log(userId);
       const input = req.body;
       const response = await PostLogic.createPost({ userId, input });
       res.json({
@@ -24,7 +25,7 @@ export const PostController: {
   },
   async deletePost(req, res, next) {
     try {
-      const userId = "65bd31185fff9e5ef81504cc";
+      const userId = req.currentUser?.id as string;
       const postId = req.params.id;
       const response = await PostLogic.deletePost({ userId, postId });
       res.json({
@@ -39,7 +40,7 @@ export const PostController: {
   async updatePost(req, res, next) {
     try {
       const postId = req.params.id;
-      const userId = "65bd31185fff9e5ef81504cc";
+      const userId = req.currentUser?.id as string;
       const input = req.body;
       const response = await PostLogic.updatePost({ userId, postId, input });
       res.json({
@@ -57,7 +58,7 @@ export const PostController: {
       const response = await PostLogic.getPostById({ postId });
       res.json({
         success: true,
-        message: "Post updated successfully",
+        message: "Post fetched successfully",
         data: response,
       });
     } catch (error) {
@@ -66,10 +67,11 @@ export const PostController: {
   },
   async getAllPosts(req, res, next) {
     try {
-      const response = await PostLogic.getAllPosts();
+      const input = req.query;
+      const response = await PostLogic.getAllPosts(input);
       res.json({
         success: true,
-        message: "Posts updated successfully",
+        message: "Posts fetched successfully",
         data: response,
       });
     } catch (error) {
