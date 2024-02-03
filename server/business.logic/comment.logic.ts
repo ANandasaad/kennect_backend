@@ -129,6 +129,7 @@ export const CommentLogic = {
     return new Promise(async (resolve, reject) => {
       try {
         const { skip, search, take } = input;
+        console.log(search);
         const skipItems = Number(take) * Number((skip as number) - 1);
         const skipLimit = {};
         if (Number(skip) && Number(take))
