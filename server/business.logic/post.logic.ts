@@ -26,7 +26,7 @@ export const PostLogic = {
   async createPost({ userId, input }: CREATE_POST_TYPE) {
     return new Promise(async (resolve, reject) => {
       try {
-        const { images, caption } = input;
+        const { caption } = input;
 
         const isUserExist = await prisma.user.findUnique({
           where: {
@@ -37,8 +37,16 @@ export const PostLogic = {
         const create = await prisma.post.create({
           data: {
             caption,
-            images: images ? images : undefined,
+
             userId,
+          },
+          include: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
+            },
           },
         });
         return resolve(create);
@@ -87,6 +95,9 @@ export const PostLogic = {
               mode: "insensitive",
             },
           },
+          include: {
+            Comment: true,
+          },
         });
 
         if (!posts.length) throw new NotFound("No posts found");
@@ -111,7 +122,7 @@ export const PostLogic = {
             Comment: true,
           },
         });
-        if (isPostExist) throw new NotFound("Post not found");
+        if (!isPostExist) throw new NotFound("Post not found");
         return resolve(isPostExist);
       } catch (error) {
         reject(error);

@@ -55,6 +55,7 @@ export const PostController: {
   async getPostById(req, res, next) {
     try {
       const postId = req.params.id;
+      console.log(postId);
       const response = await PostLogic.getPostById({ postId });
       res.json({
         success: true,
