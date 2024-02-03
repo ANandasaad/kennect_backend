@@ -10,6 +10,9 @@ type SIGN_IN_TYPE = {
   email: string;
   password: string;
 };
+type Ids = {
+  userId: string;
+};
 
 export const UserLogic = {
   async signUp({ input }: SIGN_UP_TYPE) {
@@ -51,11 +54,61 @@ export const UserLogic = {
           isUserExists.password
         );
         if (!decodePassword) throw new NotFound("Password is not valid");
+
+        const update = await prisma.user.update({
+          where: {
+            id: isUserExists.id,
+          },
+          data: {
+            isLogged: true,
+          },
+        });
+
         const token = await jwt.sign(
           { id: isUserExists.id },
           configs.JWT_SECRET
         );
-        return resolve({ user: isUserExists, token });
+
+        return resolve({ user: update, token });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
+  async logOut({ userId }: Ids) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const userLogOut = await prisma.user.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            isLogged: false,
+          },
+
+          select: {
+            firstName: true,
+            lastName: true,
+            isLogged: true,
+          },
+        });
+        return resolve(userLogOut);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  async selfUser({ userId }: Ids) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const isUserExists = await prisma.user.findUnique({
+          where: {
+            id: userId,
+          },
+        });
+        if (!isUserExists) throw new NotFound("User not found");
+        return resolve(isUserExists);
       } catch (error) {
         reject(error);
       }
