@@ -100,6 +100,7 @@ export const PostLogic = {
           },
           include: {
             Comment: true,
+            user: true,
           },
         });
 

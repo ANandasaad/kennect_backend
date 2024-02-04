@@ -145,6 +145,9 @@ export const CommentLogic = {
           orderBy: {
             createdAt: "desc",
           },
+          include: {
+            user: true,
+          },
         });
         if (!getAllComments.length) throw new NotFound("No comments found");
         const pagination = {
