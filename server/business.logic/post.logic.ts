@@ -95,6 +95,9 @@ export const PostLogic = {
               mode: "insensitive",
             },
           },
+          orderBy: {
+            createdAt: "desc",
+          },
           include: {
             Comment: true,
           },
